@@ -1,5 +1,21 @@
 /*
 https://colobu.com/2024/08/13/string-bytes-benchmark/
+
+goos: linux
+goarch: amd64
+cpu: AMD Ryzen 7 PRO 4750G with Radeon Graphics
+BenchmarkStringToBytes/强制转换-16                 	22622428	        52.24 ns/op	      16 B/op	       1 allocs/op
+BenchmarkStringToBytes/反射转换-16                 	469501591	         2.498 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringToBytes/新型转换-16                 	712188750	         1.583 ns/op	       0 B/op	       0 allocs/op
+BenchmarkStringToBytes/指针转换-16                 	714454291	         1.583 ns/op	       0 B/op	       0 allocs/op
+
+goos: linux
+goarch: amd64
+cpu: AMD Ryzen 7 PRO 4750G with Radeon Graphics
+BenchmarkBytesToString/强制转换-16                 	25351454	        43.93 ns/op	      16 B/op	       1 allocs/op
+BenchmarkBytesToString/反射转换-16                 	673316130	         1.597 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBytesToString/新型转换-16                 	734822632	         1.533 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBytesToString/指针转换-16                 	704448451	         1.585 ns/op	       0 B/op	       0 allocs/op
 */
 package main
 
@@ -70,36 +86,44 @@ func toPointerString(b []byte) string {
 
 // endregion
 
+// benchmark
+type tester[param, res any] struct {
+	name string
+	fn   func(param) res
+}
+
+var stringToBytesTests = []tester[string, []byte]{
+	{"强制转换", toRawBytes},
+	{"反射转换", toReflectBytes},
+	{"新型转换", toBytes},
+	{"指针转换", toPointerBytes},
+}
+
+var bytesToStringTest = []tester[[]byte, string]{
+	{"强制转换", toRawString},
+	{"反射转换", toReflectString},
+	{"新型转换", toString},
+	{"指针转换", toPointerString},
+}
+
 var s = "hello, world"
 var bts = []byte("hello, world")
 
 func BenchmarkStringToBytes(b *testing.B) {
-	var fns = map[string]func(string) []byte{
-		"强制转换": toRawBytes,
-		"传统转换": toReflectBytes,
-		"新型转换": toBytes,
-		"指针转换": toPointerBytes,
-	}
-	for name, fn := range fns {
-		b.Run(name, func(b *testing.B) {
+	for _, t := range stringToBytesTests {
+		b.Run(t.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				bts = fn(s)
+				bts = t.fn(s)
 			}
 		})
 	}
 }
 
 func BenchmarkBytesToString(b *testing.B) {
-	var fns = map[string]func([]byte) string{
-		"强制转换": toRawString,
-		"传统转换": toReflectString,
-		"新型转换": toString,
-		"指针转换": toPointerString,
-	}
-	for name, fn := range fns {
-		b.Run(name, func(b *testing.B) {
+	for _, t := range bytesToStringTest {
+		b.Run(t.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				s = fn(bts)
+				s = t.fn(bts)
 			}
 		})
 	}
