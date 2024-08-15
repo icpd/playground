@@ -41,7 +41,7 @@ func toRawString(b []byte) string {
 
 // endregion
 
-// region unsafe
+// region 反射
 func toReflectBytes(s string) []byte {
 	if len(s) == 0 {
 		return nil
@@ -59,7 +59,7 @@ func toReflectString(b []byte) string {
 
 // endregion
 
-// region new unsafe go1.20
+// region 新型 go1.20
 func toBytes(s string) []byte {
 	if len(s) == 0 {
 		return nil
@@ -75,7 +75,7 @@ func toString(b []byte) string {
 
 // endregion
 
-// region unsafe pointer
+// region 指针
 func toPointerBytes(s string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&s))
 }
