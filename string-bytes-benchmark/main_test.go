@@ -99,7 +99,7 @@ var stringToBytesTests = []tester[string, []byte]{
 	{"指针转换", toPointerBytes},
 }
 
-var bytesToStringTest = []tester[[]byte, string]{
+var bytesToStringTests = []tester[[]byte, string]{
 	{"强制转换", toRawString},
 	{"反射转换", toReflectString},
 	{"新型转换", toString},
@@ -120,7 +120,7 @@ func BenchmarkStringToBytes(b *testing.B) {
 }
 
 func BenchmarkBytesToString(b *testing.B) {
-	for _, t := range bytesToStringTest {
+	for _, t := range bytesToStringTests {
 		b.Run(t.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				s = t.fn(bts)
