@@ -10,6 +10,17 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// resty
+/**
+client := resty.New()
+client.GetClient().Transport = &http.Transport{
+	DialContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
+		fmt.Println(network, addr)
+		return net.Dial(network, "127.0.0.1:9090")
+	},
+}
+*/
+
 func main() {
 	c := client.New().SetDial(func(addr string) (net.Conn, error) {
 		fmt.Println("dial raw addr", addr)
