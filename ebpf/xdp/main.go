@@ -47,6 +47,7 @@ func main() {
 	tick := time.Tick(time.Second)
 	stop := make(chan os.Signal, 5)
 	signal.Notify(stop, os.Interrupt)
+	var globalCount uint64
 	for {
 		select {
 		case <-tick:
@@ -55,7 +56,10 @@ func main() {
 			if err != nil {
 				log.Fatal("Map lookup:", err)
 			}
-			log.Printf("Received %d packets", count)
+
+			lastedCount := globalCount
+			globalCount = count
+			log.Printf("Received %d packets, +%d", count, count-lastedCount)
 		case <-stop:
 			log.Print("Received signal, exiting..")
 			return
