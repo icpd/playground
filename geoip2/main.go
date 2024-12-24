@@ -7,6 +7,8 @@ import (
 	"github.com/oschwald/geoip2-golang"
 )
 
+// docker run --env-file env -v .:/usr/share/GeoIP ghcr.io/maxmind/geoipupdate
+// https://github.com/maxmind/geoipupdate/blob/main/doc/docker.md
 func main() {
 	ip := net.ParseIP("103.116.72.17")
 
